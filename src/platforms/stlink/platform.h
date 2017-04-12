@@ -54,10 +54,13 @@
 #define TCK_PIN		GPIO5
 #define TDO_PIN		GPIO6
 
+
 #define SWDIO_PORT 	TMS_PORT
 #define SWCLK_PORT 	TCK_PORT
 #define SWDIO_PIN	TMS_PIN
 #define SWCLK_PIN	TCK_PIN
+#define SWO_PORT        GPIOA
+#define SWO_PIN         GPIO10
 
 #define SRST_PORT	GPIOB
 #define SRST_PIN_V1	GPIO1
@@ -70,6 +73,7 @@
 
 #define PLATFORM_HAS_TRACESWO	1
 #define NUM_TRACE_PACKETS		(128)		/* This is an 8K buffer */
+#define TRACESWO_ASYNC 1
 
 #define TMS_SET_MODE() \
 	gpio_set_mode(TMS_PORT, GPIO_MODE_OUTPUT_50_MHZ, \
@@ -91,6 +95,8 @@
 /* Interrupt priorities.  Low numbers are high priority.
  * For now USART2 preempts USB which may spin while buffer is drained.
  */
+
+#define IRQ_PRI_SWODMA          (1 << 4)
 #define IRQ_PRI_USB		(2 << 4)
 #define IRQ_PRI_USBUSART	(1 << 4)
 #define IRQ_PRI_USBUSART_TIM	(3 << 4)
@@ -116,6 +122,24 @@ int usbuart_debug_write(const char *buf, size_t len);
 #else
 # define DEBUG(...)
 #endif
+#define SWO_PIN_SETUP()						     \
+        gpio_set_mode(SWO_PORT, GPIO_MODE_INPUT, \
+        GPIO_CNF_INPUT_FLOAT, SWO_PIN);
+
+/* Note that SWO needs to be on USART1 RX to get maximum speed */
+#define SWOUSART                USART1
+#define SWOUSARTDR              USART1_DR
+#define SWOUSART_CR1            USART1_CR1
+#define SWOUSART_IRQ            NVIC_USART1_IRQ
+#define SWOUSART_CLK            RCC_USART1
+#define SWOUSART_PORT           GPIOA
+#define SWOUSART_TX_PIN         GPIO10
+#define SWOUSART_ISR            usart1_isr
+
+/* This DMA channel is set by the USART in use */
+#define SWODMABUS               DMA1
+#define SWDDMACHAN              DMA_CHANNEL5
+#define SWODMAIRQ               NVIC_DMA1_CHANNEL5_IRQ
 
 /* On F103, only USART1 is on AHB2 and can reach 4.5 MBaud at 72 MHz.*/
 #define SWO_UART				USART1

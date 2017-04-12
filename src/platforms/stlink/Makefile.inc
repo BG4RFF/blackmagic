@@ -25,6 +25,7 @@ SRC += 	cdcacm.c	\
 	usbuart.c 	\
 	serialno.c	\
 	timing.c	\
+	traceswoasync.c \
 	timing_stm32.c	\
 	traceswoasync.c	\
 	stlink_common.c \
