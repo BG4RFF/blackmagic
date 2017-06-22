@@ -293,13 +293,9 @@ static bool cmd_traceswo(target *t, int argc, const char **argv)
     if (argc>1)
         speed=atoi(argv[1]);
 
-    traceswo_init(speed);
-    gdb_outf("%s:%02X:%02X\n", serial_no, 5, 0x85);
-    return true;
-  if (!speed)
-    {
-      gdb_outf("%s:%02X:%02X\n", serial_no, 5, 0x85);
-    }
+  traceswo_init(speed);
+  gdb_outf("%s:%02X:%02X\n", serial_no, 5, 0x85);
+
   return true;
 }
 #endif
