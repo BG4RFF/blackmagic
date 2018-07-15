@@ -48,6 +48,18 @@ cable_desc_t cable_desc[] = {
 		.name = "flossjtag"
 	},
 	{
+		/* Resistor connection from FTDI to TDI for Swd.
+		   JTAG not possible.*/
+		.vendor = 0x0403,
+		.product = 0x6010,
+		.interface = INTERFACE_A,
+		.dbus_data = 0x08,
+		.dbus_ddr  = 0x1B,
+		.bitbang_tms_in_port_cmd = GET_BITS_LOW,
+		.bitbang_tms_in_pin = MPSSE_TDI,
+		.name = "resistor_swd"
+	},
+	{
 		/* Buffered connection from FTDI to Jtag/Swd.
 		 * TCK and TMS not independant switchable!
 		 * SWD not possible. */
