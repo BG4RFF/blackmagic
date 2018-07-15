@@ -393,7 +393,7 @@ void adiv5_dp_init(ADIv5_DP_t *dp)
 {
 	volatile bool probed = false;
 	volatile uint32_t ctrlstat = 0;
-
+	ADIv5_AP_t *ap0 = NULL;
 	adiv5_dp_ref(dp);
 
 	volatile struct exception e;
@@ -450,17 +450,21 @@ void adiv5_dp_init(ADIv5_DP_t *dp)
 			adiv5_ap_unref(ap);
 			continue;
 		}
+		DEBUG("ap_base %08x\n", ap->base);
 
 		/* Should probe further here to make sure it's a valid target.
 		 * AP should be unref'd if not valid.
 		 */
 
 		/* The rest sould only be added after checking ROM table */
-		probed |= adiv5_component_probe(ap, ap->base);
-		if (!probed && (dp->idcode & 0xfff) == 0x477) {
-			DEBUG("-> cortexm_probe forced\n");
-			cortexm_probe(ap);
-		}
+		if (adiv5_component_probe(ap, ap->base))
+			probed= true;
+		ap0 = ap;
+	}
+	if (!probed && (dp->idcode & 0xfff) == 0x477) {
+		DEBUG("-> AP cortexm_probe forced\n");
+		if (ap0)
+			cortexm_probe(ap0);
 	}
 	adiv5_dp_unref(dp);
 }
