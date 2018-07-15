@@ -334,7 +334,10 @@ static bool adiv5_component_probe(ADIv5_AP_t *ap, uint32_t addr)
 				switch (pidr_pn_bits[i].arch) {
 				case aa_cortexm:
 					DEBUG("-> cortexm_probe\n");
+					bool reset_active = platform_srst_get_val();
 					cortexm_probe(ap);
+					if (reset_active && !platform_srst_get_val())
+						platform_srst_set_val(true);
 					break;
 				case aa_cortexa:
 					DEBUG("-> cortexa_probe\n");

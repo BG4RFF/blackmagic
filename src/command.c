@@ -170,8 +170,6 @@ static bool cmd_jtag_scan(target *t, int argc, char **argv)
 
 	if(assert_srst != ASSERT_NEVER)
 		platform_srst_set_val(true);
-	if(assert_srst == ASSERT_UNTIL_SCAN)
-		platform_srst_set_val(false);
 
 	int devs = -1;
 	volatile struct exception e;
@@ -186,6 +184,9 @@ static bool cmd_jtag_scan(target *t, int argc, char **argv)
 		gdb_outf("Exception: %s\n", e.msg);
 		break;
 	}
+
+	if(assert_srst != ASSERT_UNTIL_ATTACH)
+		platform_srst_set_val(false);
 
 	if(devs <= 0) {
 		platform_srst_set_val(false);
@@ -203,8 +204,6 @@ bool cmd_swdp_scan(void)
 
 	if(assert_srst != ASSERT_NEVER)
 		platform_srst_set_val(true);
-	if(assert_srst == ASSERT_UNTIL_SCAN)
-		platform_srst_set_val(false);
 
 	int devs = -1;
 	volatile struct exception e;
@@ -220,6 +219,8 @@ bool cmd_swdp_scan(void)
 		break;
 	}
 
+	if(assert_srst != ASSERT_UNTIL_ATTACH)
+		platform_srst_set_val(false);
 	if(devs <= 0) {
 		platform_srst_set_val(false);
 		gdb_out("SW-DP scan failed!\n");
